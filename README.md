@@ -1,0 +1,175 @@
+# Tar Client 0.1.0 — Windows preview
+
+A standalone Windows launcher for **Minecraft Java 1.21.11 / Fabric 0.19.5**,
+plus its bundled Tar Client cosmetic and HUD mod. This is a real desktop app,
+not a website or a mod-only download.
+
+Tar Client is a free, MIT-licensed project branded **Tarre Industries**. This is
+a project name, not a claim of incorporation or a verified Windows publisher.
+Minecraft itself remains a separate product and requires its own entitlement
+for full-game play.
+
+## Code signing policy
+
+The current preview is unsigned. Free community signing is being explored;
+no provider has accepted this project yet. See [Code signing policy](CODE-SIGNING.md),
+[Privacy](PRIVACY.md), and [Contributing](CONTRIBUTING.md).
+
+**Windows signing remains unfinished.** Smart App Control may block this unsigned
+EXE without a Run anyway option. See [WINDOWS-SIGNING.md](WINDOWS-SIGNING.md).
+Do not disable Windows protection or use the CMD launcher to evade that block.
+
+## Start
+
+1. Extract the entire `TarClient-0.1.0-Windows.zip` archive.
+2. Open `Tar Client/Tar Client.exe`. Keep `app` and `runtime` beside the EXE.
+   For ordinary startup errors (not a Windows security block), `Start Tar Client.cmd`
+   starts the same launcher using the bundled Java runtime and shows startup errors.
+3. Click **Install / verify files**. The first download includes Minecraft,
+   Fabric, assets, Fabric API, Mod Menu, BetterF3 and their required dependencies.
+4. To try it without an account, choose **Try Minecraft demo**. This launches
+   Minecraft's own restricted demo, not an offline full-game account.
+5. Full-game sign-in requires the application ID described in
+   [SIGN-IN-SETUP.md](SIGN-IN-SETUP.md). This build does not include one.
+
+Java 21 is bundled. The download targets Windows x64. The launcher defaults to
+4 GB game memory; change it under **Launcher settings**.
+
+**Verification status:** the code compiles; seven launcher tests pass; all eleven
+mixin classes were checked against the exact 1.21.11 bytecode (sixteen injection
+targets and eleven shadow fields); live installation downloaded and verified 84
+library entries and over 4,500 assets. The actual Swing launcher was rendered for
+visual inspection. A complete gameplay session and Microsoft login have **not**
+been verified: Fabric startup is blocked by this build environment's Windows
+filesystem sandbox, and no registered Microsoft client ID/account was supplied.
+Treat this as a preview build, not a fully gameplay-tested release.
+
+## Included features
+
+| Feature | Controls |
+| --- | --- |
+| Fullbright | Enable and brightness strength; visual lightmap only |
+| Crosshair | Color, arm length, gap, thickness, dot, outline, third-person display |
+| Item size | First-person, inventory, dropped, third-person and fixed/display scales; per-item overrides; held maps included |
+| No fog | Terrain fog; optional fluid-fog removal |
+| FPS | Live game FPS; position, scale and colors |
+| Ping | Your multiplayer latency in ms; singleplayer is labeled separately |
+| Armor status | Every armor slot, remaining points or percent; configurable warning threshold, volume and cooldown |
+| Borderless fullscreen | F11 uses the current monitor's borderless desktop-sized window |
+| Keystrokes | Actual bound movement/jump keys, mouse buttons, left/right CPS, pressed color |
+| BetterF3 | Actual BetterF3 mod, installed from Modrinth for 1.21.11 |
+| Potion status | Effect name, amplifier and duration; beneficial/harmful filters |
+| Hitbox outlines | F3+B color, eye-height box and direction; optional always-on display |
+| Low / side shield | Downward and outward offsets |
+| Low fire | Fire-overlay vertical offset |
+| Glint | Hide enchantment glint or set its vanilla strength and speed |
+
+**Right Shift** opens Tar settings in game; it can be rebound in Minecraft's key
+settings. The title and pause screens also have a **Tar settings** button.
+Choose **Edit HUD positions** in a world to drag panels. Numeric controls, colors
+and toggles save automatically. HUD coordinates are percentages so layouts adapt
+to resolution changes. Disable a module to restore its normal rendering path.
+
+Glint customization here means strength and speed, not replacement textures or
+arbitrary glint colors. Hitbox customization affects debug drawing only; it never
+changes collision boxes, attack reach or server behavior. Fullbright, no fog and
+item scaling start disabled. Armor alerts use the game's pling sound, so the
+Minecraft Master volume also affects their audibility.
+
+The first-person map renderer is covered separately by item scaling. Per-item
+overrides apply across contexts, for example:
+
+`minecraft:diamond_sword=0.65;minecraft:shield=0.8`
+
+Change borderless mode while windowed, then press F11. BetterF3 and other
+third-party mods expose their own settings in the in-game **Mods** menu. Their
+schemas differ, so they are not copied into Tar's built-in settings form.
+
+## Add and manage mods
+
+- **Discover mods:** search Modrinth, filtered to Fabric and 1.21.11. Installation
+  resolves required dependencies and checks SHA-512 hashes before committing files.
+- **Installed mods → Import Fabric JARs:** select one or more local `.jar` files.
+  Forge-only, server-only and declared incompatible versions are rejected.
+- Use **Check dependencies** after importing local JARs. Missing requirements and
+  declared conflicts block launching and are reported by name.
+- Disabling renames a mod to `.jar.disabled`. Removing moves it into
+  `removed-mods`, allowing recovery. Tar's core mod is managed by the launcher.
+- Close Minecraft before changing installed mods. Use the in-game menu for Tar
+  settings while playing, so the launcher cannot overwrite live settings.
+
+Version declarations and hashes cannot guarantee that arbitrary third-party mods
+work together. Renderer replacements and other mods that modify the same game
+code still need a real launch test. Required Modrinth dependencies install
+automatically; optional dependencies do not. Search returns the first 30 matches;
+use a more specific query to narrow it.
+
+## Files and data
+
+The default instance is `%LOCALAPPDATA%\TarClient\instance-1.21.11` (on standard
+Windows profiles). It is separate from the official `.minecraft` folder.
+
+- `config/tarclient.json`: shared launcher/in-game settings.
+- `mods/`: installed JARs and disabled JARs.
+- `tar-mods.json`: Modrinth version and hash records.
+- `saves/`, `screenshots/`, `resourcepacks/`: normal Minecraft content.
+- `logs/latest.log`: Minecraft/Fabric log.
+- `%LOCALAPPDATA%\TarClient\game-output.log`: last game's console output.
+- `%LOCALAPPDATA%\TarClient\launcher.json`: memory and public application ID.
+
+The first launch needs Internet access and several gigabytes of free disk space.
+Minecraft files and third-party mods are downloaded from their providers; they
+are not redistributed in this ZIP. This preview rechecks official metadata online
+at launch, so it is not an offline launcher.
+
+## Build and extend
+
+Requires a JDK 21 and Gradle 9.3.0. Run `build-windows.ps1`, or:
+
+```powershell
+gradle :launcher:test :client-mod:build :launcher:fatJar
+```
+
+The GitHub Actions workflow builds an **unsigned preview** on a standard Windows
+runner, only in a public repository. Its first hosted run is still unverified.
+It does not purchase services, sign executables, or publish releases automatically.
+
+## Uninstall
+
+Close Minecraft and Tar Client, then delete the extracted launcher folder.
+To also remove downloaded files and settings, first back up worlds under
+`%LOCALAPPDATA%\TarClient\instance-1.21.11\saves`, then delete
+`%LOCALAPPDATA%\TarClient`. This second step deletes saved worlds, screenshots,
+mods and settings. If you chose custom data or instance locations, use those
+locations instead. No Windows service or registry installation is created.
+
+## Extend the source
+
+`launcher` is the desktop app; `client-mod` is the Fabric component; `common` holds
+the shared declarative settings schema. Add a module to `ClientConfig.MODULES`
+and implement its HUD/event/mixin behavior in `client-mod`; both settings menus
+then discover its controls. Third-party mods need no source changes.
+
+The release JAR must contain the **remapped** client mod, not a development JAR.
+The build task embeds it under `bundled/tar-client.jar`. The Windows packaging
+script deliberately retains `runtime/bin/java.exe` to launch the game.
+
+Development diagnostics:
+
+```powershell
+java -jar tar-launcher.jar --smoke C:\path\to\isolated-test-instance
+java -jar tar-launcher.jar --smoke C:\path\to\isolated-test-instance --launch
+```
+
+The second command starts Minecraft in demo mode. Never point a smoke test at an
+existing personal instance. `-Dtar.data=...` and `-Dtar.instance=...` can override
+the launcher data and game directories for isolated testing.
+
+## References
+
+- [Minecraft 1.21.11 release](https://www.minecraft.net/en-us/article/minecraft-java-edition-1-21-11)
+- [Fabric 1.21.11 developer notes](https://fabricmc.net/2025/12/05/12111.html)
+- [Modrinth version API](https://docs.modrinth.com/api/operations/getprojectversions/)
+- [Microsoft device-code flow](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code)
+
+Not an official Minecraft product. Not approved by or associated with Mojang or Microsoft.

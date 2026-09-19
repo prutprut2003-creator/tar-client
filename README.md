@@ -9,6 +9,10 @@ a project name, not a claim of incorporation or a verified Windows publisher.
 Minecraft itself remains a separate product and requires its own entitlement
 for full-game play.
 
+[Unsigned Windows preview download](https://github.com/prutprut2003-creator/tar-client/releases/tag/v0.1.0-preview)
+is available with checksums and the exact source commit. It is still subject to
+the Windows signing limitation below.
+
 ## Code signing policy
 
 The current preview is unsigned. Free community signing is being explored;
@@ -131,7 +135,8 @@ gradle :launcher:test :client-mod:build :launcher:fatJar
 ```
 
 The GitHub Actions workflow builds an **unsigned preview** on a standard Windows
-runner, only in a public repository. Its first hosted run is still unverified.
+runner, only in a public repository. [Build 35425079764](https://github.com/prutprut2003-creator/tar-client/actions/runs/35425079764)
+passed on 19 September 2026, including all seven launcher tests and Windows packaging.
 It does not purchase services, sign executables, or publish releases automatically.
 
 ## Uninstall

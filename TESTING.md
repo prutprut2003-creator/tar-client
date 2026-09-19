@@ -1,4 +1,23 @@
-# Verification record — 18 September 2026
+# Verification record — updated 19 September 2026
+
+## Public hosted build
+
+[GitHub Actions build 35425079764](https://github.com/prutprut2003-creator/tar-client/actions/runs/35425079764)
+completed successfully on Windows Server 2022 with Temurin 21.0.10 and Gradle 9.3.0.
+Source commit: `7360ecf14345ed9bb9a9c496846dead52b10487d`.
+
+- The normal Gradle/Loom pipeline compiled the client and launcher, remapped the
+  Fabric JAR, and created the Windows application image and ZIP.
+- All 7 launcher tests passed; 0 failed and 0 were skipped.
+- The downloaded artifact's SHA-256 matched the build-generated checksum:
+  `f8b71ab8b51baa7c5417d43d19c5611229bcb210dff73abde95710a9e04a352b`.
+- Required launcher/runtime files are present. The launcher EXE remains unsigned.
+
+This hosted build resolves the local Gradle build limitation described below.
+It does not test interactive game rendering, account login, or Smart App Control
+acceptance. Those limitations remain.
+
+The remaining sections record the earlier local verification of 18 September.
 
 ## Passed
 

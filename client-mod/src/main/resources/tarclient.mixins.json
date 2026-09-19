@@ -2,6 +2,6 @@
   "required": true,
   "package": "dev.tarclient.mod.mixin",
   "compatibilityLevel": "JAVA_21",
-  "client": ["HudMixin", "MouseMixin", "LightmapMixin", "FogMixin", "ItemModelMixin", "ItemStateMixin", "HeldItemMixin", "FireMixin", "WindowMixin", "HitboxMixin", "DebugRendererMixin"],
+  "client": ["HudMixin", "MouseMixin", "KeyboardMixin", "LightmapMixin", "FogMixin", "ItemModelMixin", "ItemStateMixin", "HeldItemMixin", "FireMixin", "WindowMixin", "HitboxMixin", "DebugRendererMixin"],
   "injectors": { "defaultRequire": 1 }
 }

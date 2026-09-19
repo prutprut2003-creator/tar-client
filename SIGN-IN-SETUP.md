@@ -15,12 +15,12 @@ the launcher can create automatically. Minecraft demo mode is available without 
 2. Follow Microsoft's current Xbox/Minecraft third-party application access
    requirements. A generic Entra registration alone may not grant Minecraft API
    access. A rejected application typically fails during Xbox or Minecraft login.
-3. Copy the **Application (client) ID** into Tar Client → Launcher settings →
+3. Copy the **Application (client) ID** into Tar Client â†’ Launcher settings â†’
    Microsoft sign-in, then save. An app ID is public configuration, not a password.
 4. Click **Sign in with Microsoft**. In your own browser, visit the displayed
    Microsoft verification page and enter the temporary code. Sign in yourself.
 5. Return to Tar Client. A successful Minecraft profile lookup shows your player
-   name. Click **Launch Minecraft**.
+   name. Click **Play Minecraft**.
 
 Use an account with Minecraft Java ownership or a qualifying active subscription.
 Family restrictions or missing Xbox profiles may need to be resolved in Microsoft's

@@ -14,7 +14,7 @@ public final class Net {
     private static final HttpClient HTTP=HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(25)).followRedirects(HttpClient.Redirect.NORMAL).build();
     public static HttpRequest.Builder request(String url) {
         URI uri=URI.create(url); if(!"https".equals(uri.getScheme())) throw new IllegalArgumentException("HTTPS required");
-        return HttpRequest.newBuilder(uri).timeout(Duration.ofMinutes(3)).header("User-Agent","TarClient/0.1.0 (personal Minecraft launcher)");
+        return HttpRequest.newBuilder(uri).timeout(Duration.ofMinutes(3)).header("User-Agent","TarClient/0.2.0 (personal Minecraft launcher)");
     }
     public static JsonObject object(String url) throws Exception { return json(url).getAsJsonObject(); }
     public static JsonElement json(String url) throws Exception { return send(request(url).GET().build()); }

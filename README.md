@@ -1,4 +1,4 @@
-# Tar Client 0.1.0 — Windows preview
+# Tar Client 0.2.0 — Windows preview
 
 A standalone Windows launcher for **Minecraft Java 1.21.11 / Fabric 0.19.5**,
 plus its bundled Tar Client cosmetic and HUD mod. This is a real desktop app,
@@ -9,9 +9,7 @@ a project name, not a claim of incorporation or a verified Windows publisher.
 Minecraft itself remains a separate product and requires its own entitlement
 for full-game play.
 
-[Unsigned Windows preview download](https://github.com/prutprut2003-creator/tar-client/releases/tag/v0.1.0-preview)
-is available with checksums and the exact source commit. It is still subject to
-the Windows signing limitation below.
+[Public releases](https://github.com/prutprut2003-creator/tar-client/releases) include checksums. The current source is 0.2.0; check the download version before installing. Windows signing remains subject to the limitation below.
 
 ## Code signing policy
 
@@ -25,7 +23,7 @@ Do not disable Windows protection or use the CMD launcher to evade that block.
 
 ## Start
 
-1. Extract the entire `TarClient-0.1.0-Windows.zip` archive.
+1. Extract the entire `TarClient-0.2.0-Windows.zip` archive.
 2. Open `Tar Client/Tar Client.exe`. Keep `app` and `runtime` beside the EXE.
    For ordinary startup errors (not a Windows security block), `Start Tar Client.cmd`
    starts the same launcher using the bundled Java runtime and shows startup errors.
@@ -37,16 +35,18 @@ Do not disable Windows protection or use the CMD launcher to evade that block.
    [SIGN-IN-SETUP.md](SIGN-IN-SETUP.md). This build does not include one.
 
 Java 21 is bundled. The download targets Windows x64. The launcher defaults to
-4 GB game memory; change it under **Launcher settings**.
+4 GB game memory; change it under **Settings**.
 
-**Verification status:** the code compiles; seven launcher tests pass; all eleven
-mixin classes were checked against the exact 1.21.11 bytecode (sixteen injection
-targets and eleven shadow fields); live installation downloaded and verified 84
-library entries and over 4,500 assets. The actual Swing launcher was rendered for
-visual inspection. A complete gameplay session and Microsoft login have **not**
-been verified: Fabric startup is blocked by this build environment's Windows
-filesystem sandbox, and no registered Microsoft client ID/account was supplied.
-Treat this as a preview build, not a fully gameplay-tested release.
+## What's new in 0.2.0
+
+- Fixed borderless F11 resizing: native window callbacks no longer overwrite the target monitor dimensions.
+- Right Shift opens/closes the new searchable, categorized in-game module menu; it respects text input and key-binding screens.
+- Redesigned launcher with a dark sidebar, original block artwork, module cards and an Accounts page.
+- Modrinth discovery now has category filters, sorting, pagination and asynchronous mod icons.
+- Start Microsoft sign-in or account creation from Accounts. The official browser completes the account flow; a registered Tar application ID is still required for sign-in.
+- Existing worlds and settings are reused. The previous bundled core is backed up during upgrade.
+
+**Verification status:** nine launcher tests pass. Twelve remapped mixins were checked against Minecraft 1.21.11 bytecode. A real GLFW window passed three fullscreen/windowed cycles with geometry callbacks at 3840x2160. The Swing launcher and live Modrinth catalog were rendered and inspected. Full gameplay, multi-monitor transitions and Microsoft account login remain unverified. See [TESTING.md](TESTING.md).
 
 ## Included features
 
@@ -70,7 +70,7 @@ Treat this as a preview build, not a fully gameplay-tested release.
 
 **Right Shift** opens Tar settings in game; it can be rebound in Minecraft's key
 settings. The title and pause screens also have a **Tar settings** button.
-Choose **Edit HUD positions** in a world to drag panels. Numeric controls, colors
+Choose **Edit HUD** in a world to drag panels. Numeric controls, colors
 and toggles save automatically. HUD coordinates are percentages so layouts adapt
 to resolution changes. Disable a module to restore its normal rendering path.
 

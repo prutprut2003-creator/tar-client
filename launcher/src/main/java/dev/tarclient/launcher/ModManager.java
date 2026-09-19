@@ -18,6 +18,18 @@ public final class ModManager {
         String facets="[[\"project_type:mod\"],[\"categories:fabric\"],[\"versions:1.21.11\"],[\"client_side:required\",\"client_side:optional\"]]";
         return Net.object(API+"search?limit=30&query="+Net.enc(query)+"&facets="+Net.enc(facets)).getAsJsonArray("hits");
     }
+    public record SearchPage(JsonArray hits,int total) {}
+    public SearchPage searchPage(String query,String index,int offset,String category) throws Exception {
+        if(!Set.of("relevance","downloads","updated","newest").contains(index))throw new IllegalArgumentException("Unknown sort order");
+        if(offset<0)throw new IllegalArgumentException("Invalid page");
+        var facets=JsonParser.parseString("[[\"project_type:mod\"],[\"categories:fabric\"],[\"versions:1.21.11\"],[\"client_side:required\",\"client_side:optional\"]]").getAsJsonArray();
+        if(!category.isBlank()){
+            if(!Set.of("optimization","utility","decoration").contains(category))throw new IllegalArgumentException("Unknown category");
+            var filter=new JsonArray();filter.add("categories:"+category);facets.add(filter);
+        }
+        var result=Net.object(API+"search?limit=12&offset="+offset+"&index="+index+"&query="+Net.enc(query)+"&facets="+Net.enc(facets.toString()));
+        return new SearchPage(result.getAsJsonArray("hits"),result.get("total_hits").getAsInt());
+    }
     private JsonObject latest(String project) throws Exception {
         var versions=Net.json(API+"project/"+Net.enc(project)+"/version?loaders="+Net.enc("[\"fabric\"]")+"&game_versions="+Net.enc("[\"1.21.11\"]")).getAsJsonArray();
         if(versions.isEmpty())throw new IOException("No Fabric 1.21.11 release for "+project);

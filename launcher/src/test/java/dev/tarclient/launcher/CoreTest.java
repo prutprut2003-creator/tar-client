@@ -41,5 +41,22 @@ public class CoreTest {
         var m=new ModManager(temp.resolve("game"),s->{});m.importJar(jar("dependent.jar","{\"id\":\"test\",\"version\":\"1.0\",\"depends\":{\"missing\":\"*\"}}","fabric.mod.json"));assertThrows(Exception.class,m::preflight);
     }
     @Test void demoSessionIsExplicitAndTokenNotPrinted() {var demo=MicrosoftAuth.Session.demoSession();assertTrue(demo.demo());var live=new MicrosoftAuth.Session("Player","id","TOP-SECRET",0,false);assertFalse(live.toString().contains("TOP-SECRET"));}
+    @Test void coreUpgradePreservesWorldsAndBacksUpPreviousCore() throws Exception {
+        Path game=temp.resolve("game"),mods=game.resolve("mods");Files.createDirectories(mods);
+        Path old=jar("previous.jar","{\"id\":\"tarclient\",\"version\":\"0.1.0\"}","fabric.mod.json");
+        Files.copy(old,mods.resolve("tar-client-0.1.0.jar"));
+        Path world=game.resolve("saves/My world/level.dat");Files.createDirectories(world.getParent());Files.writeString(world,"world data");
+        Path other=mods.resolve("my-mod.jar");Files.writeString(other,"unrelated mod");
+        byte[] update=Files.readAllBytes(jar("update.jar","{\"id\":\"tarclient\",\"version\":\"0.2.0\"}","fabric.mod.json"));
+        for(int i=0;i<2;i++)CoreInstaller.install(game,new java.io.ByteArrayInputStream(update),"0.2.0");
+        assertArrayEquals(update,Files.readAllBytes(mods.resolve("tar-client-0.2.0.jar")));
+        assertFalse(Files.exists(mods.resolve("tar-client-0.1.0.jar")));
+        assertEquals("world data",Files.readString(world));assertEquals("unrelated mod",Files.readString(other));
+        try(var backups=Files.list(game.resolve("removed-mods"))){var saved=backups.toList();assertEquals(1,saved.size());assertArrayEquals(Files.readAllBytes(old),Files.readAllBytes(saved.getFirst()));}
+    }
+    @Test void missingBundledCoreLeavesPreviousInstallUntouched() throws Exception {
+        Path old=temp.resolve("mods/tar-client-0.1.0.jar");Files.createDirectories(old.getParent());Files.writeString(old,"original");
+        assertThrows(java.io.IOException.class,()->CoreInstaller.install(temp,null,"0.2.0"));assertEquals("original",Files.readString(old));
+    }
     private Path jar(String name,String content,String entry)throws Exception{Path p=temp.resolve(name);try(var zip=new ZipOutputStream(Files.newOutputStream(p))){zip.putNextEntry(new ZipEntry(entry));zip.write(content.getBytes(java.nio.charset.StandardCharsets.UTF_8));zip.closeEntry();}return p;}
 }

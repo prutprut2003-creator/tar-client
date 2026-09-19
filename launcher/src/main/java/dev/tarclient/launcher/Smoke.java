@@ -10,7 +10,7 @@ public final class Smoke {
         Path game=Path.of(args[1]).toAbsolutePath();Files.createDirectories(game);
         var mods=new ModManager(game,System.out::println);
         mods.installDefaults();
-        try(var in=Smoke.class.getResourceAsStream("/bundled/tar-client.jar")){if(in!=null)Files.copy(in,game.resolve("mods/tar-client-0.1.0.jar"),StandardCopyOption.REPLACE_EXISTING);}
+        try(var in=Smoke.class.getResourceAsStream("/bundled/tar-client.jar")){CoreInstaller.install(game,in,TarLauncher.VERSION);}
         mods.preflight();
         var installer=new GameInstaller(game,System.out::println);var install=installer.install();
         System.out.println("INSTALLATION VERIFIED: "+install.classpath().size()+" libraries");

@@ -29,13 +29,13 @@ public final class TarClient implements ClientModInitializer {
     private long lastAlert;
     private boolean glintApplied;
     private double vanillaGlintStrength,vanillaGlintSpeed;
+    public static KeyBinding MENU_KEY;
     @Override public void onInitializeClient() {
         try{CONFIG=ClientConfig.read(PATH);}catch(Exception e){org.slf4j.LoggerFactory.getLogger("TarClient").error("Could not read settings; defaults are active",e);}
-        var key=KeyBindingHelper.registerKeyBinding(new KeyBinding("key.tarclient.menu",InputUtil.Type.KEYSYM,GLFW.GLFW_KEY_RIGHT_SHIFT,KeyBinding.Category.create(Identifier.of("tarclient","client"))));
+        MENU_KEY=KeyBindingHelper.registerKeyBinding(new KeyBinding("key.tarclient.menu",InputUtil.Type.KEYSYM,GLFW.GLFW_KEY_RIGHT_SHIFT,KeyBinding.Category.create(Identifier.of("tarclient","client"))));
         HudElementRegistry.attachElementBefore(VanillaHudElements.CHAT,Identifier.of("tarclient","hud"),(context,ticks)->{if(!(MinecraftClient.getInstance().currentScreen instanceof HudEditorScreen))TarHud.render(context,false);});
         ScreenEvents.AFTER_INIT.register((client,screen,w,h)->{if(screen instanceof TitleScreen||screen instanceof GameMenuScreen)Screens.getButtons(screen).add(ButtonWidget.builder(Text.literal("Tar settings"),b->client.setScreen(new TarSettingsScreen(screen))).dimensions(w-114,8,106,20).build());});
         ClientTickEvents.END_CLIENT_TICK.register(client->{
-            while(key.wasPressed())client.setScreen(new TarSettingsScreen(client.currentScreen));
             long now=System.currentTimeMillis();prune(LEFT_CLICKS,now);prune(RIGHT_CLICKS,now);
             updateGlint(client);
             if(client.player==null){lastAlert=0;return;}
@@ -46,6 +46,11 @@ public final class TarClient implements ClientModInitializer {
             }
         });
         org.slf4j.LoggerFactory.getLogger("TarClient").info("Tar Client initialized: 14 modules for Minecraft 1.21.11");
+    }
+    public static void toggleMenu(MinecraftClient client){
+        if(client.currentScreen instanceof TarSettingsScreen menu)menu.close();
+        else if(client.currentScreen instanceof HudEditorScreen editor)editor.close();
+        else client.setScreen(new TarSettingsScreen(client.currentScreen));
     }
     private void updateGlint(MinecraftClient client) {
         if(CONFIG.on("glint")) {

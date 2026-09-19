@@ -6,6 +6,7 @@ Bundled in the launcher JAR:
 - Gson 2.13.2 — Apache 2.0 — https://github.com/google/gson
 - FlatLaf 3.7 — Apache 2.0 — https://github.com/JFormDesigner/FlatLaf
 - Fabric Loader API/implementation 0.19.5 (version predicate parsing) — Apache 2.0 — https://github.com/FabricMC/fabric-loader
+- TwelveMonkeys ImageIO WebP and supporting modules 3.15.2 — BSD 3-Clause — https://github.com/haraldk/TwelveMonkeys
 
 The Windows package contains a Temurin OpenJDK 21.0.10 runtime, GPLv2 with
 Classpath Exception and third-party notices. Its license files are retained

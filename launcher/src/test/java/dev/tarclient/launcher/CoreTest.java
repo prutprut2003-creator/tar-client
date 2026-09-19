@@ -58,5 +58,13 @@ public class CoreTest {
         Path old=temp.resolve("mods/tar-client-0.1.0.jar");Files.createDirectories(old.getParent());Files.writeString(old,"original");
         assertThrows(java.io.IOException.class,()->CoreInstaller.install(temp,null,"0.2.0"));assertEquals("original",Files.readString(old));
     }
+    @Test void decodesWebpModrinthIcons() throws Exception {
+        // Original 2x2 solid-color fixture, encoded losslessly as WebP.
+        byte[] bytes=Base64.getDecoder().decode("UklGRh4AAABXRUJQVlA4TBEAAAAvAUAAAAdQvFJUpv+BiOh/AAA=");
+        try(var input=new javax.imageio.stream.MemoryCacheImageInputStream(new java.io.ByteArrayInputStream(bytes))){
+            var readers=javax.imageio.ImageIO.getImageReaders(input);assertTrue(readers.hasNext());var reader=readers.next();
+            try{reader.setInput(input);var image=reader.read(0);assertEquals(2,image.getWidth());assertEquals(2,image.getHeight());assertEquals(0xFF147832,image.getRGB(0,0));}finally{reader.dispose();}
+        }
+    }
     private Path jar(String name,String content,String entry)throws Exception{Path p=temp.resolve(name);try(var zip=new ZipOutputStream(Files.newOutputStream(p))){zip.putNextEntry(new ZipEntry(entry));zip.write(content.getBytes(java.nio.charset.StandardCharsets.UTF_8));zip.closeEntry();}return p;}
 }

@@ -11,7 +11,9 @@ by the user.
   Mojang/Microsoft, and Fabric metadata/libraries from FabricMC. A launch checks
   installation metadata online and installs the default mods if needed.
 - Mod discovery sends your search text, game version and loader filter to Modrinth.
-  Installation fetches mod metadata and files, including required dependencies.
+  Opening Discover mods requests a compatible catalog; displayed project icons
+  are fetched from Modrinth's CDN. Installation fetches mod metadata and files,
+  including required dependencies.
 - Microsoft sign-in opens the provider's page in your browser. The launcher uses
   Microsoft, Xbox and Minecraft services to obtain a game session and check your
   entitlement. It does not ask for your Microsoft password.

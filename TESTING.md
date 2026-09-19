@@ -3,10 +3,11 @@
 ## 0.2.0 local verification (19 September)
 
 - Launcher and Fabric client compile against the exact Minecraft 1.21.11 dependencies.
-- All 9 JUnit tests pass, including an idempotent core upgrade that preserves worlds and unrelated mods, and a missing-bundle failure that leaves the previous installation intact.
+- All 10 JUnit tests pass, including an idempotent core upgrade that preserves worlds and unrelated mods, and a missing-bundle failure that leaves the previous installation intact.
 - Production remapping completed. Bytecode checks pass for 12 mixin classes, 17 injection targets and 12 shadow fields, including the new keyboard hook.
 - A native GLFW test invokes the actual WindowMixin transition code with position/size callbacks mutating its fields. Three fullscreen/windowed cycles passed at 3840x2160, checking geometry and decoration restoration. This uses a hidden native test window, not a Minecraft gameplay session; multiple monitors and DPI configurations remain unverified.
 - Actual Swing components for Play, Client modules, Accounts and the live Modrinth catalog were rendered and visually inspected.
+- Live Modrinth integration checked two distinct result pages, version filters, a performance-category search and WebP icon decoding. An original WebP fixture also passes through the packaged decoder in JUnit.
 - Microsoft application registration and account login remain outstanding. This build contains no publisher client ID.
 - The local compiler driver leaves its file manager open until process exit because the sandbox denies an extra ZipFS canonical-path traversal during close. Compilation itself succeeds; a fresh hosted Gradle build has not yet been run for 0.2.0.
 

@@ -4,6 +4,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.13.2'
     implementation 'com.formdev:flatlaf:3.7'
     implementation 'net.fabricmc:fabric-loader:0.19.5'
+    implementation 'com.twelvemonkeys.imageio:imageio-webp:3.15.2'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

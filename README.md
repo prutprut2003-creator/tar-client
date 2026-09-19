@@ -46,7 +46,7 @@ Java 21 is bundled. The download targets Windows x64. The launcher defaults to
 - Start Microsoft sign-in or account creation from Accounts. The official browser completes the account flow; a registered Tar application ID is still required for sign-in.
 - Existing worlds and settings are reused. The previous bundled core is backed up during upgrade.
 
-**Verification status:** nine launcher tests pass. Twelve remapped mixins were checked against Minecraft 1.21.11 bytecode. A real GLFW window passed three fullscreen/windowed cycles with geometry callbacks at 3840x2160. The Swing launcher and live Modrinth catalog were rendered and inspected. Full gameplay, multi-monitor transitions and Microsoft account login remain unverified. See [TESTING.md](TESTING.md).
+**Verification status:** ten launcher tests pass. Twelve remapped mixins were checked against Minecraft 1.21.11 bytecode. A real GLFW window passed three fullscreen/windowed cycles with geometry callbacks at 3840x2160. The Swing launcher and live Modrinth catalog were rendered and inspected. Full gameplay, multi-monitor transitions and Microsoft account login remain unverified. See [TESTING.md](TESTING.md).
 
 ## Included features
 

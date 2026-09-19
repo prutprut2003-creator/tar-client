@@ -23,7 +23,7 @@ final class ModIcons {
                 byte[] data;
                 try(var stream=response.body()){if(response.statusCode()!=200)return;data=stream.readNBytes(262145);}
                 if(data.length>262144)return;
-                try(var stream=ImageIO.createImageInputStream(new ByteArrayInputStream(data))){
+                try(var stream=new javax.imageio.stream.MemoryCacheImageInputStream(new ByteArrayInputStream(data))){
                     var readers=ImageIO.getImageReaders(stream);if(!readers.hasNext())return;var reader=readers.next();
                     try{reader.setInput(stream);if(reader.getWidth(0)>2048||reader.getHeight(0)>2048)return;
                         var icon=new ImageIcon(reader.read(0).getScaledInstance(44,44,Image.SCALE_SMOOTH));

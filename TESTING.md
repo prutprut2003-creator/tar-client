@@ -1,5 +1,17 @@
 # Verification record — updated 19 September 2026
 
+## 0.2.0 public hosted build
+
+[GitHub Actions build 35458397484](https://github.com/prutprut2003-creator/tar-client/actions/runs/35458397484) passed on Windows Server 2022 with Temurin 21.0.10 and Gradle 9.3.0.
+Source commit: `3b912a9b9af5b732150047d6c41b9e920e36eacb`.
+
+- All 10 launcher tests passed, with 0 failures and 0 skipped tests.
+- The normal Gradle/Loom pipeline built and remapped the client and packaged the Windows launcher.
+- Downloaded Windows ZIP SHA-256 matched the build checksum: `2cc4eb6d62f1e70452d733cdb82cc3a5f11101afc5021958641574b221fd77a3`.
+- Required runtime, launcher, bundled 0.2.0 core, keyboard hook and WebP decoder files were checked in the actual artifact.
+- The bundled runtime and fat JAR passed the WebP fixture test, verifying image-reader service discovery after packaging.
+- Full Minecraft gameplay, multiple monitors and Microsoft sign-in remain unverified as described below.
+
 ## 0.2.0 local verification (19 September)
 
 - Launcher and Fabric client compile against the exact Minecraft 1.21.11 dependencies.
@@ -9,7 +21,7 @@
 - Actual Swing components for Play, Client modules, Accounts and the live Modrinth catalog were rendered and visually inspected.
 - Live Modrinth integration checked two distinct result pages, version filters, a performance-category search and WebP icon decoding. An original WebP fixture also passes through the packaged decoder in JUnit.
 - Microsoft application registration and account login remain outstanding. This build contains no publisher client ID.
-- The local compiler driver leaves its file manager open until process exit because the sandbox denies an extra ZipFS canonical-path traversal during close. Compilation itself succeeds; a fresh hosted Gradle build has not yet been run for 0.2.0.
+- The local compiler driver leaves its file manager open until process exit because the sandbox denies an extra ZipFS canonical-path traversal during close. Compilation itself succeeds; the hosted build above subsequently passed.
 
 ## 0.1.0 public hosted build
 

@@ -1,0 +1,11 @@
+plugins { id 'net.fabricmc.fabric-loom-remap' version '1.14.10' }
+java { toolchain { languageVersion = JavaLanguageVersion.of(21) }; withSourcesJar() }
+base { archivesName = 'tar-client' }
+dependencies {
+    minecraft 'com.mojang:minecraft:1.21.11'
+    mappings 'net.fabricmc:yarn:1.21.11+build.6:v2'
+    modImplementation 'net.fabricmc:fabric-loader:0.19.5'
+    modImplementation 'net.fabricmc.fabric-api:fabric-api:0.141.6+1.21.11'
+}
+sourceSets.main.java.srcDir '../common/src/main/java'
+processResources { inputs.property 'version', project.version; filesMatching('fabric.mod.json') { expand version: project.version } }

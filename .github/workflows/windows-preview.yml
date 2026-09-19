@@ -1,0 +1,56 @@
+name: Windows preview (unsigned)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: windows-preview-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    # This project uses only free standard runners in PUBLIC repositories.
+    if: github.event.repository.private == false
+    runs-on: windows-2022
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
+        with:
+          distribution: temurin
+          java-version: '21.0.10+7'
+      - uses: gradle/actions/setup-gradle@4c125117fe7c5aed11272ec4213f602f012f89f2 # v5
+        with:
+          gradle-version: '9.3.0'
+          cache-disabled: true
+      - name: Test, build and package unsigned preview
+        shell: pwsh
+        run: ./build-windows.ps1
+      - name: Audit native signatures (launcher is currently unsigned)
+        shell: pwsh
+        run: ./sign-windows.ps1 -PackagePath './dist/Tar Client'
+      - name: Upload preview
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: TarClient-Windows-UNSIGNED-${{ github.sha }}
+          path: |
+            dist/TarClient-0.1.0-Windows.zip
+            dist/SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 7
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: launcher-test-results
+          path: launcher/build/reports/tests/test
+          if-no-files-found: ignore
+          retention-days: 7

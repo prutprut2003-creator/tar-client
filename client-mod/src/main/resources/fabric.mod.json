@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "id": "tarclient",
+  "version": "${version}",
+  "name": "Tar Client",
+  "description": "Customizable HUD, controls and cosmetic rendering for Tar Client.",
+  "authors": ["Tar Client"],
+  "environment": "client",
+  "license": "MIT",
+  "entrypoints": { "client": ["dev.tarclient.mod.TarClient"] },
+  "mixins": ["tarclient.mixins.json"],
+  "depends": { "fabricloader": ">=0.19.5", "minecraft": "1.21.11", "java": ">=21", "fabric-api": "*" }
+}

@@ -9,7 +9,9 @@
 - The launcher module page was rendered and inspected at 1180x820.
 - The isolated demo installation verified 84 classpath entries and 4,591 asset-index entries. Fabric startup was blocked by an environment AccessDeniedException in WindowsPath.toRealPath for a game library, before Tar initialization. No in-world/rendering/gameplay result is claimed.
 - The Windows Spotify helper ran but the local media-session service returned 'specified service does not exist'. Its unavailable state is handled; live song/artwork and shape rendering remain unverified on a normal desktop.
-- Public 0.3.0 CI and publication remain pending GitHub account verification. Minecraft app approval is still pending separately.
+- [Public Windows build 35531439667](https://github.com/prutprut2003-creator/tar-client/actions/runs/35531439667) passed all 15 tests, packaging and the native signature audit (Tar launcher remains unsigned). Source commit: `2e5ac655eaef7d32d0d73569f4ace2757f788d29`.
+- The published ZIP is 61,930,901 bytes and matches SHA-256 `50c408d5a698ac9defcbe5886e6fa0036924af7868f54c31fffb007f76dd5329`. Its bundled runtime rendered the launcher successfully; the embedded public app ID, 0.3.0 mod metadata, 18 mixins and Spotify helper resource were verified in the downloaded artifact.
+- [0.3.0 preview is published](https://github.com/prutprut2003-creator/tar-client/releases/tag/v0.3.0-preview). Minecraft app approval remains pending separately.
 
 ## 0.2.1 local verification (20 September)
 

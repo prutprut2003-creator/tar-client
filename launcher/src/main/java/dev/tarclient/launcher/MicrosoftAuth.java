@@ -7,13 +7,18 @@ import java.io.*;
 
 /** Browser-based Microsoft device authorization. Tokens live only in this process. */
 public final class MicrosoftAuth {
+    /** Public desktop application identifier; never a password or client secret. */
+    public static final String DEFAULT_CLIENT_ID="c8d8f6e2-12dc-4499-911c-1c7294e91f44";
+    static String clientId(String override) {
+        return override==null||override.isBlank()?DEFAULT_CLIENT_ID:override.trim();
+    }
     public record Session(String name,String uuid,String accessToken,long expiresAt,boolean demo) {
         public static Session demoSession() { return new Session("DemoPlayer","00000000000000000000000000000000","0",Long.MAX_VALUE,true); }
         @Override public String toString() { return name+(demo?" (demo)":""); }
     }
     public record DeviceCode(String code,String url,int expiresIn) {}
     public Session login(String clientId,Consumer<DeviceCode> showCode) throws Exception {
-        if(clientId==null||clientId.isBlank()) throw new IOException("Set your Microsoft application/client ID in Launcher settings first. See SIGN-IN-SETUP.md.");
+        clientId=clientId(clientId);
         String root="https://login.microsoftonline.com/consumers/oauth2/v2.0/";
         var device=Net.form(root+"devicecode",Map.of("client_id",clientId.trim(),"scope","XboxLive.signin"));
         check(device);

@@ -116,7 +116,7 @@ public final class GameInstaller {
         Map<String,String> v=new HashMap<>();
         v.put("auth_player_name",session.name()); v.put("version_name","TarClient-"+VERSION); v.put("game_directory",root.toString());
         v.put("assets_root",root.resolve("assets").toString());v.put("assets_index_name",installation.assetsId());v.put("auth_uuid",session.uuid());v.put("auth_access_token",session.accessToken());
-        v.put("user_type","msa");v.put("version_type","Tar Client");v.put("natives_directory",installation.natives().toString());v.put("launcher_name","TarClient");v.put("launcher_version","0.2.0");
+        v.put("user_type","msa");v.put("version_type","Tar Client");v.put("natives_directory",installation.natives().toString());v.put("launcher_name","TarClient");v.put("launcher_version",TarLauncher.VERSION);
         v.put("classpath",String.join(File.pathSeparator,installation.classpath().stream().map(Path::toString).toList()));
         v.put("library_directory",root.resolve("libraries").toString());v.put("classpath_separator",File.pathSeparator);v.put("clientid","");v.put("auth_xuid","");v.put("resolution_width","1280");v.put("resolution_height","800");
         List<String> args=new ArrayList<>(List.of(java,"-Xms512M","-Xmx"+ram+"M","-Dfile.encoding=UTF-8"));
@@ -157,3 +157,4 @@ public final class GameInstaller {
     }
     static String quoteArg(String value) { return "\""+value.replace("\\","\\\\").replace("\"","\\\"").replace("\n","\\n").replace("\r","\\r")+"\""; }
 }
+

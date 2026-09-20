@@ -1,4 +1,7 @@
 {
  "key.category.tarclient.client": "Tar Client",
- "key.tarclient.menu": "Open Tar Client settings"
+ "key.tarclient.menu": "Open Tar Client settings",
+ "key.category.tarclient.features": "Tar Client controls",
+ "key.tarclient.zoom": "Hold to zoom",
+ "key.tarclient.freelook": "Hold to freelook"
 }

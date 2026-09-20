@@ -4,23 +4,30 @@ Tar Client implements Microsoft's device-code flow, Xbox Live authentication,
 XSTS, Minecraft token exchange and a Minecraft profile check. It does not collect
 your password, borrow another launcher's identity, or provide cracked accounts.
 
-**This build has no registered Microsoft application ID. Full account sign-in
-cannot work until a valid application ID with the necessary Xbox/Minecraft API
-access is supplied.** That registration is an external prerequisite, not something
-the launcher can create automatically. Minecraft demo mode is available without it.
+**Tar Client 0.2.1 includes its registered Microsoft application ID automatically:**
+`c8d8f6e2-12dc-4499-911c-1c7294e91f44`.
+This is a public identifier, not a password. Users do not need an Azure account,
+an app registration, or any manual application ID setup.
 
-1. Register an application in Microsoft Entra with support for personal Microsoft
-   accounts. Enable public-client flows for device-code authentication. Do not
-   create or embed a client secret for this desktop app.
-2. Follow Microsoft's current Xbox/Minecraft third-party application access
-   requirements. A generic Entra registration alone may not grant Minecraft API
-   access. A rejected application typically fails during Xbox or Minecraft login.
-3. Copy the **Application (client) ID** into Tar Client â†’ Launcher settings â†’
-   Microsoft sign-in, then save. An app ID is public configuration, not a password.
-4. Click **Sign in with Microsoft**. In your own browser, visit the displayed
-   Microsoft verification page and enter the temporary code. Sign in yourself.
-5. Return to Tar Client. A successful Minecraft profile lookup shows your player
-   name. Click **Play Minecraft**.
+**Minecraft API approval is still pending.** The publisher submitted the review
+request on 20 September 2026 and the form confirmed receipt. Submission does not
+mean approval. Full account sign-in has not been verified. Entra
+registration and public-client configuration alone do not grant Minecraft access.
+
+1. Open **Accounts** and click **Sign in with Microsoft**.
+2. Complete the official Microsoft device-code flow in your own browser.
+3. A successful Minecraft profile lookup will show your player name. Full-game
+   launch requires that successful lookup and a valid entitlement.
+
+Missing, empty or whitespace-only application ID settings use the built-in ID,
+including when upgrading an older preview. An explicit custom ID remains in use.
+The advanced override is under **Settings > Microsoft connection**; clearing it
+and saving restores the built-in ID.
+
+For source forks that use their own identity: register an application supporting
+personal Microsoft accounts and enable public-client flows for device-code sign-in.
+Do not create or embed a client secret. Request Minecraft API access through
+the official [AppID review form](https://aka.ms/mce-reviewappid).
 
 Use an account with Minecraft Java ownership or a qualifying active subscription.
 Family restrictions or missing Xbox profiles may need to be resolved in Microsoft's

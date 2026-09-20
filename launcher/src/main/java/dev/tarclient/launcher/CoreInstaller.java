@@ -20,13 +20,15 @@ final class CoreInstaller {
                 Files.move(pending,target,StandardCopyOption.REPLACE_EXISTING);
             } finally { Files.deleteIfExists(pending); }
         }
-        Path old = game.resolve("mods/tar-client-0.1.0.jar");
-        if (!old.equals(target) && Files.isRegularFile(old)) {
-            var metadata = new ModManager(game,s->{}).metadata(old);
-            if (metadata.has("id") && "tarclient".equals(metadata.get("id").getAsString())) {
-                Path backup = game.resolve("removed-mods/tar-client-0.1.0-"+System.currentTimeMillis()+".jar");
-                Files.createDirectories(backup.getParent());
-                Files.move(old,backup);
+        for (String previous : new String[]{"0.1.0", "0.2.0", "0.2.1"}) {
+            Path old = game.resolve("mods/tar-client-"+previous+".jar");
+            if (!old.equals(target) && Files.isRegularFile(old)) {
+                var metadata = new ModManager(game,s->{}).metadata(old);
+                if (metadata.has("id") && "tarclient".equals(metadata.get("id").getAsString())) {
+                    Path backup = game.resolve("removed-mods/tar-client-"+previous+"-"+System.currentTimeMillis()+".jar");
+                    Files.createDirectories(backup.getParent());
+                    Files.move(old,backup);
+                }
             }
         }
     }

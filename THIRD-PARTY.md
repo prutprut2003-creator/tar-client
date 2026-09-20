@@ -24,3 +24,13 @@ Downloaded on first installation, not bundled in this distribution:
 
 These projects and additional user-installed mods remain under their own licenses.
 Tar does not claim authorship of BetterF3 or any third-party mod.
+
+Optional 1.21.11 integrations, downloaded from Modrinth when enabled (not bundled):
+- TierTagger 2.4.1 — MPL-2.0 — https://modrinth.com/mod/tiertagger — https://github.com/mctiers-dev/TierTagger (requires ukulib).
+- Smooth Motion Blur 1.0.0 — LGPL-3.0-only — https://modrinth.com/mod/smooth-motion-blur — https://github.com/realjahleel/smooth-motion-blur.
+- 3D Skin Layers 1.11.3 — tr7zw Protective License — https://modrinth.com/mod/3dskinlayers — https://github.com/tr7zw/3d-skin-layers.
+- Resource Tree 1.2 — MIT — https://modrinth.com/mod/resource-tree-mod — https://github.com/Naw7k/resource-tree.
+
+Versions above were verified during 0.3.0 development. The launcher resolves a
+current compatible Fabric 1.21.11 release and verifies Modrinth's file checksum.
+Required dependencies retain their upstream licenses.

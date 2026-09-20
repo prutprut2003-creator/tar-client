@@ -16,7 +16,7 @@ import java.util.concurrent.*;
 
 public final class TarLauncher extends JFrame {
     static final Color BG=LauncherTheme.BG,CARD=LauncherTheme.CARD,GREEN=LauncherTheme.ACCENT,MUTED=LauncherTheme.MUTED;
-    public static final String VERSION="0.2.0";
+    public static final String VERSION="0.3.0";
     private final Path data,game,settingsPath;
     private ClientConfig config;
     private JsonObject prefs;
@@ -72,7 +72,7 @@ public final class TarLauncher extends JFrame {
         sidebar.add(label("PLAY & PERSONALIZE",9,MUTED));sidebar.add(Box.createVerticalStrut(12));
         nav(sidebar,"Play",this::home);nav(sidebar,"Client modules",this::modules);nav(sidebar,"Discover mods",this::discover);nav(sidebar,"Installed mods",this::installed);
         sidebar.add(Box.createVerticalStrut(24));sidebar.add(label("YOUR SPACE",10,MUTED));sidebar.add(Box.createVerticalStrut(12));
-        nav(sidebar,"Accounts",this::accounts);nav(sidebar,"Settings",this::settings);nav(sidebar,"Activity",this::activity);
+        nav(sidebar,"Profiles",this::profiles);nav(sidebar,"Accounts",this::accounts);nav(sidebar,"Settings",this::settings);nav(sidebar,"Activity",this::activity);
         sidebar.add(Box.createVerticalGlue());sidebar.add(LauncherTheme.badge("FABRIC  /  1.21.11"));sidebar.add(Box.createVerticalStrut(14));
         account.setForeground(MUTED);account.setFont(new Font("Segoe UI",Font.PLAIN,12));sidebar.add(account);
         sidebar.add(Box.createVerticalStrut(8));sidebar.add(label("Tarre Industries  /  "+VERSION,10,MUTED));
@@ -133,13 +133,12 @@ public final class TarLauncher extends JFrame {
         else{actions.add(primary("Play Minecraft",()->launch(false)));actions.add(button("Sign out",()->{if(canEdit()){session=null;account.setText("Not signed in");accounts();}}));}
         main.add(actions);main.add(Box.createVerticalStrut(16));main.add(label("No separate Tar account is needed. Never enter your Microsoft password into Tar.",12,MUTED));list.add(main);
         list.add(Box.createVerticalStrut(16));JPanel info=card();info.add(label("New to Minecraft?",19,Color.WHITE));info.add(Box.createVerticalStrut(8));info.add(wrap("Creating a Microsoft account is free. Playing the full game needs a Minecraft Java entitlement. You can try Minecraft's demo while setting up your account.",3));info.add(Box.createVerticalStrut(12));info.add(button("Try Minecraft demo",()->launch(true)));list.add(info);
-        if(pref("clientId","").isBlank()){
-            list.add(Box.createVerticalStrut(16));JPanel setup=card();setup.add(label("Microsoft connection setup required",17,GREEN));setup.add(Box.createVerticalStrut(8));setup.add(wrap("This preview does not yet include Tar Client's registered Microsoft application ID. Sign-in becomes available once that publisher setup is complete. If you already have an approved ID, you can configure it below.",3));setup.add(Box.createVerticalStrut(12));setup.add(button("Configure connection",this::settings));list.add(setup);
+        if(MicrosoftAuth.DEFAULT_CLIENT_ID.equals(MicrosoftAuth.clientId(pref("clientId","")))){
+            list.add(Box.createVerticalStrut(16));JPanel setup=card();setup.add(label("Minecraft approval pending",17,GREEN));setup.add(Box.createVerticalStrut(8));setup.add(wrap("Tar Client's Microsoft connection is already configured. Minecraft API approval is still pending, so full account sign-in may not complete yet. No application ID setup is needed.",3));list.add(setup);
         }
         page("Accounts","Your Minecraft identity, connected securely.",scroll(list));
     }
     private void login(){
-        if(pref("clientId","").isBlank()){accounts();status("Microsoft connection needs the publisher's application ID. See the setup card.");return;}
         operation(()->{session=new MicrosoftAuth().login(pref("clientId",""),code->SwingUtilities.invokeLater(()->{
             JDialog dialog=new JDialog(this,"Connect your Microsoft account",false);dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             JPanel panel=card();panel.setPreferredSize(new Dimension(500,330));panel.add(label("Connect to Minecraft",25,Color.WHITE));panel.add(Box.createVerticalStrut(12));panel.add(wrap("Enter this one-time code on Microsoft's secure page. Your password stays with Microsoft.",2));panel.add(Box.createVerticalStrut(16));
@@ -151,7 +150,7 @@ public final class TarLauncher extends JFrame {
         }));},()->{account.setText(session.name());status("Connected as "+session.name());accounts();});
     }
     private GameInstaller.Installation prepare() throws Exception {
-        config.save(settingsPath);installCore();mods.installDefaults();mods.preflight();
+        config.save(settingsPath);installCore();mods.installDefaults();mods.syncIntegrations(config);mods.preflight();
         return new GameInstaller(game,this::status).install();
     }
     private void installCore() throws Exception {
@@ -172,7 +171,7 @@ public final class TarLauncher extends JFrame {
     }
     private void modules(){
         JPanel panel=new JPanel(new BorderLayout(0,18));JTextField search=new JTextField();search.putClientProperty("JTextField.placeholderText","Search your modules...");search.setPreferredSize(new Dimension(300,40));
-        JComboBox<String> category=new JComboBox<>(new String[]{"All","HUD","Visual","Window"});JPanel filters=new JPanel(new BorderLayout(12,0));filters.add(search);filters.add(category,BorderLayout.EAST);panel.add(filters,BorderLayout.NORTH);
+        JComboBox<String> category=new JComboBox<>(new String[]{"All","HUD","Visual","Window","Utility","Integrations"});JPanel filters=new JPanel(new BorderLayout(12,0));filters.add(search);filters.add(category,BorderLayout.EAST);panel.add(filters,BorderLayout.NORTH);
         JPanel grid=new JPanel(new GridLayout(0,2,14,14));grid.setOpaque(false);
         Runnable refresh=()->{grid.removeAll();for(var m:ClientConfig.MODULES){
             if(!category.getSelectedItem().equals("All")&&!m.category().equals(category.getSelectedItem()))continue;
@@ -184,6 +183,7 @@ public final class TarLauncher extends JFrame {
         page("Client modules","Your HUD and visuals. Right Shift opens the menu in game.",panel);
     }
     private void moduleSettings(ClientConfig.Module m){
+        if(m.id().equals("profiles")){profiles();return;}
         JPanel c=card();c.add(label(m.name(),24,Color.WHITE));c.add(Box.createVerticalStrut(8));c.add(wrap(m.description(),2));c.add(Box.createVerticalStrut(16));
             for(var s:m.settings())if(!s.key().equals("enabled")){JPanel r=new JPanel(new BorderLayout(20,8));r.setOpaque(false);r.setMaximumSize(new Dimension(10000,40));r.add(label(s.label(),13,MUTED));JComponent control;
                 if(s.initial() instanceof Boolean){JCheckBox check=new JCheckBox("",config.bool(m.id(),s.key()));check.setOpaque(false);check.addActionListener(e->{if(canEdit()){config.set(m.id(),s.key(),check.isSelected());saveConfig();}else check.setSelected(config.bool(m.id(),s.key()));});control=check;}
@@ -193,6 +193,14 @@ public final class TarLauncher extends JFrame {
         JDialog dialog=new JDialog(this,m.name(),false);dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);dialog.add(scroll(c));dialog.setSize(560,Math.min(650,180+m.settings().size()*46));dialog.setLocationRelativeTo(this);dialog.setVisible(true);
     }
     private boolean canEdit(){if(running()||busy){JOptionPane.showMessageDialog(this,"Use the in-game settings while Minecraft runs, or wait for the current operation.");return false;}return true;}
+    private void profiles(){
+        JPanel list=column();var store=new dev.tarclient.config.ProfileStore(settingsPath.getParent());
+        JPanel save=card();save.add(label("Save your current setup",22,Color.WHITE));save.add(Box.createVerticalStrut(12));
+        JTextField name=new JTextField();name.putClientProperty("JTextField.placeholderText","Profile name, e.g. Bedwars");name.setMaximumSize(new Dimension(10000,38));save.add(name);save.add(Box.createVerticalStrut(12));
+        save.add(primary("Save profile",()->{if(!canEdit())return;try{String value=name.getText().trim();if(store.list().contains(value)&&JOptionPane.showConfirmDialog(this,"Replace profile "+value+"?","Profiles",JOptionPane.YES_NO_OPTION)!=JOptionPane.YES_OPTION)return;store.save(value,config);profiles();status("Saved profile "+value);}catch(Exception e){status(e.getMessage());}}));list.add(save);
+        try{store.presets();for(String profile:store.list()){list.add(Box.createVerticalStrut(12));JPanel card=card();card.add(label(profile,19,Color.WHITE));card.add(Box.createVerticalStrut(8));card.add(button("Load profile",()->{if(!canEdit())return;try{config=store.load(profile);saveConfig();status("Loaded profile "+profile+". Integration changes apply at next launch.");}catch(Exception e){status(e.getMessage());}}));list.add(card);}}catch(Exception e){status(e.getMessage());}
+        page("Profiles","Separate module setups for Bedwars, SMP, and everything else.",scroll(list));
+    }
     private void saveConfig(){try{config.save(settingsPath);}catch(Exception e){status("Could not save settings: "+e.getMessage());}}
     private void discover(){
         JPanel panel=new JPanel(new BorderLayout(0,16));JPanel filters=column();filters.setOpaque(false);
@@ -227,11 +235,12 @@ public final class TarLauncher extends JFrame {
     private void settings(){
         JPanel list=column();JPanel gameCard=card();gameCard.add(label("Game preferences",22,Color.WHITE));gameCard.add(Box.createVerticalStrut(10));gameCard.add(wrap("Set how much memory Minecraft can use. Changes apply the next time you launch.",2));gameCard.add(Box.createVerticalStrut(14));
         JPanel memory=new JPanel(new BorderLayout(14,0));memory.setOpaque(false);memory.add(label("Memory allocation (MB)",14,LauncherTheme.TEXT));JSpinner ram=new JSpinner(new SpinnerNumberModel(Integer.parseInt(pref("ram","4096")),2048,32768,512));ram.setPreferredSize(new Dimension(180,36));memory.add(ram,BorderLayout.EAST);gameCard.add(memory);gameCard.add(Box.createVerticalStrut(20));gameCard.add(label("Your game folder",14,Color.WHITE));gameCard.add(Box.createVerticalStrut(6));gameCard.add(wrap(game.toString(),2));gameCard.add(Box.createVerticalStrut(10));gameCard.add(button("Open game folder",()->open(game)));list.add(gameCard);list.add(Box.createVerticalStrut(16));
-        JPanel connection=card();connection.add(label("Microsoft connection",22,Color.WHITE));connection.add(Box.createVerticalStrut(10));connection.add(wrap("Publisher setup: enter Tar Client's registered application ID to enable Microsoft sign-in. This public ID is not an account password.",2));connection.add(Box.createVerticalStrut(12));JTextField clientId=new JTextField(pref("clientId",""));clientId.putClientProperty("JTextField.placeholderText","Application (client) ID");clientId.setMaximumSize(new Dimension(10000,38));connection.add(clientId);connection.add(Box.createVerticalStrut(12));connection.add(label("Sessions stay in memory. Sign in again after restarting the launcher.",12,MUTED));list.add(connection);list.add(Box.createVerticalStrut(18));
-        list.add(primary("Save preferences",()->{if(!canEdit())return;prefs.addProperty("clientId",clientId.getText().trim());prefs.addProperty("ram",ram.getValue().toString());try{Net.writeJson(data.resolve("launcher.json"),prefs);status("Launcher preferences saved");}catch(Exception e){status(e.getMessage());}}));
+        JPanel connection=card();connection.add(label("Microsoft connection",22,Color.WHITE));connection.add(Box.createVerticalStrut(10));connection.add(wrap("Tar Client's Microsoft application ID is included automatically. Advanced: override it below, or clear the field to restore Tar Client's default.",2));connection.add(Box.createVerticalStrut(12));JTextField clientId=new JTextField(MicrosoftAuth.clientId(pref("clientId","")));clientId.putClientProperty("JTextField.placeholderText","Application (client) ID");clientId.setMaximumSize(new Dimension(10000,38));connection.add(clientId);connection.add(Box.createVerticalStrut(12));connection.add(label("Sessions stay in memory. Sign in again after restarting the launcher.",12,MUTED));list.add(connection);list.add(Box.createVerticalStrut(18));
+        list.add(primary("Save preferences",()->{if(!canEdit())return;prefs.addProperty("clientId",MicrosoftAuth.clientId(clientId.getText()));prefs.addProperty("ram",ram.getValue().toString());try{Net.writeJson(data.resolve("launcher.json"),prefs);status("Launcher preferences saved");}catch(Exception e){status(e.getMessage());}}));
         page("Settings","Make yourself at home. Java 21 is already included.",scroll(list));
     }
     private void activity(){JScrollPane pane=new JScrollPane(logs);pane.setBorder(null);page("Activity","Download progress and errors. Full game output is saved as game-output.log.",pane);}
     private void open(Path p){try{Files.createDirectories(p);Desktop.getDesktop().open(p.toFile());}catch(Exception e){status(e.getMessage());}}
     private void browse(String url){try{Desktop.getDesktop().browse(java.net.URI.create(url));}catch(Exception e){status(e.getMessage());}}
 }
+

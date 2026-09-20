@@ -42,7 +42,7 @@ jobs:
         with:
           name: TarClient-Windows-UNSIGNED-${{ github.sha }}
           path: |
-            dist/TarClient-0.2.0-Windows.zip
+            dist/TarClient-0.3.0-Windows.zip
             dist/SHA256SUMS.txt
           if-no-files-found: error
           retention-days: 7
@@ -54,3 +54,4 @@ jobs:
           path: launcher/build/reports/tests/test
           if-no-files-found: ignore
           retention-days: 7
+

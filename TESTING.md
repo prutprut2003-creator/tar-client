@@ -1,4 +1,22 @@
-# Verification record — updated 19 September 2026
+# Verification record — updated 20 September 2026
+
+## 0.3.0 local verification (20 September)
+
+- 15 launcher/configuration tests passed with zero failures: profiles, traversal rejection, preset preservation, old-setting migration and prior-core backups are covered alongside the previous tests.
+- Client and launcher compile with Java 21 against Minecraft 1.21.11 Yarn mappings. Remapped bytecode validation passed for 18 mixins, 26 injection targets and 12 shadow fields.
+- Inspected the camera bytecode and hooked both its normal and minecart paths for freelook. This is a structural check, not a gameplay test.
+- All four optional integrations were actually downloaded through the production ModManager, SHA-512 verified and dependency-checked. Disabling and re-enabling all four also passed preflight. Metadata is compatible with Fabric 1.21.11.
+- The launcher module page was rendered and inspected at 1180x820.
+- The isolated demo installation verified 84 classpath entries and 4,591 asset-index entries. Fabric startup was blocked by an environment AccessDeniedException in WindowsPath.toRealPath for a game library, before Tar initialization. No in-world/rendering/gameplay result is claimed.
+- The Windows Spotify helper ran but the local media-session service returned 'specified service does not exist'. Its unavailable state is handled; live song/artwork and shape rendering remain unverified on a normal desktop.
+- Public 0.3.0 CI and publication remain pending GitHub account verification. Minecraft app approval is still pending separately.
+
+## 0.2.1 local verification (20 September)
+
+- All 12 launcher tests passed, including fallback for missing/empty legacy application IDs, custom ID preservation and upgrading both previous bundled core versions without duplicates.
+- The production Microsoft device-code request accepted the built-in Tar Client application ID and returned authorization fields. No account credentials or tokens were printed or saved by this check.
+- The Accounts page was rendered and inspected: it reports that the connection is configured and Minecraft approval is pending, with no application ID setup required.
+- The publisher's live sign-in attempt reached Minecraft Services but returned HTTP 403. Full sign-in and gameplay with a live session remain unverified. The separate approval request was submitted on 20 September 2026; the confirmation page acknowledged receipt. Approval is pending.
 
 ## 0.2.0 public hosted build
 

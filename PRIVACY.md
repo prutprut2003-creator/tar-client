@@ -31,6 +31,22 @@ behavior and policies; Tar does not control or disable that behavior.
 
 ## Local data
 
+When the Spotify module is enabled, a hidden Windows PowerShell helper reads the
+local Windows media session for Spotify approximately every five seconds. Song,
+artist and thumbnail stay in memory and are used only to draw the overlay. Tar
+does not collect Spotify credentials, record audio, or upload media metadata.
+The helper stops when the module is disabled; it requires Windows media-session
+support. Browser Spotify sessions may not identify themselves as Spotify.
+
+Profiles store module settings under the game's `config/tar-profiles` directory.
+They contain no account tokens. The Server Address HUD displays the connected
+server address on screen; consider disabling it before sharing screenshots.
+
+Optional integrations are downloaded from Modrinth when enabled. TierTagger
+contacts its tier-list providers for player ranks; its requests and those of
+other optional mods are governed by their own projects. These integrations are
+off by default and can be disabled for the next launch in Tar's module menu.
+
 The default data directory is `%LOCALAPPDATA%\TarClient`. It holds settings,
 downloaded game files, mods, saves, screenshots and game output. Microsoft session
 tokens are held in memory. To start Java, a temporary argument file contains the

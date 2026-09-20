@@ -10,6 +10,29 @@ import java.util.zip.*;
 
 public class CoreTest {
     @TempDir Path temp;
+    @Test void profilesKeepModuleSettingsAndRejectEscapingNames() throws Exception {
+        var store=new dev.tarclient.config.ProfileStore(temp);store.presets();
+        var bedwars=store.load("Bedwars");assertTrue(bedwars.on("keys"));assertFalse(bedwars.on("fullbright"));
+        var smp=store.load("SMP");assertTrue(smp.on("fullbright"));assertFalse(smp.on("keys"));
+        bedwars.set("armor","showBackground",true);bedwars.set("zoom","factor",7);store.save("Custom",bedwars);
+        var restored=store.load("Custom");assertTrue(restored.bool("armor","showBackground"));assertEquals(7,restored.number("zoom","factor"));
+        restored.set("keys","enabled",false);assertTrue(store.load("Custom").on("keys"));
+        store.save("Bedwars",restored);store.presets();assertFalse(store.load("Bedwars").on("keys"));
+        for(String bad:List.of("../escape","C:/escape","","a/b","..\\escape"))assertThrows(java.io.IOException.class,()->store.save(bad,restored));
+    }
+    @Test void oldSettingsAcquireEveryHudBackgroundSwitch() throws Exception {
+        Path file=temp.resolve("old.json");Files.writeString(file,"{\"fps\":{\"enabled\":true,\"background\":\"80000000\"}}");
+        var c=ClientConfig.read(file);assertTrue(c.on("fps"));assertEquals("80000000",c.text("fps","background"));
+        for(var module:ClientConfig.MODULES)if(module.category().equals("HUD")){assertFalse(c.bool(module.id(),"showBackground"));c.set(module.id(),"showBackground",true);assertTrue(c.bool(module.id(),"showBackground"));}
+        assertTrue(c.bool("armor","horizontal"));assertEquals(4,c.number("zoom","factor"));
+    }
+    @Test void latestUpgradeBacksUpPreviousPatch() throws Exception {
+        Path mods=temp.resolve("mods");Files.createDirectories(mods);
+        byte[] old=Files.readAllBytes(jar("previous-patch.jar","{\"id\":\"tarclient\",\"version\":\"0.2.1\"}","fabric.mod.json"));Files.write(mods.resolve("tar-client-0.2.1.jar"),old);
+        byte[] update=Files.readAllBytes(jar("new-core.jar","{\"id\":\"tarclient\",\"version\":\"0.3.0\"}","fabric.mod.json"));
+        CoreInstaller.install(temp,new java.io.ByteArrayInputStream(update),"0.3.0");assertFalse(Files.exists(mods.resolve("tar-client-0.2.1.jar")));assertArrayEquals(update,Files.readAllBytes(mods.resolve("tar-client-0.3.0.jar")));
+        try(var backups=Files.list(temp.resolve("removed-mods"))){assertArrayEquals(old,Files.readAllBytes(backups.findFirst().orElseThrow()));}
+    }
     @Test void rejectsTraversalAndAbsoluteFilenames() {
         for(String bad:List.of("../escape.jar","C:/escape.jar","a/../../escape","..\\escape.jar","stream:ads"))assertThrows(Exception.class,()->Net.child(temp,bad));
         assertDoesNotThrow(()->Net.child(temp,"valid.jar"));
@@ -41,6 +64,25 @@ public class CoreTest {
         var m=new ModManager(temp.resolve("game"),s->{});m.importJar(jar("dependent.jar","{\"id\":\"test\",\"version\":\"1.0\",\"depends\":{\"missing\":\"*\"}}","fabric.mod.json"));assertThrows(Exception.class,m::preflight);
     }
     @Test void demoSessionIsExplicitAndTokenNotPrinted() {var demo=MicrosoftAuth.Session.demoSession();assertTrue(demo.demo());var live=new MicrosoftAuth.Session("Player","id","TOP-SECRET",0,false);assertFalse(live.toString().contains("TOP-SECRET"));}
+    @Test void microsoftIdWorksForFreshAndLegacyPreferences() {
+        assertEquals("c8d8f6e2-12dc-4499-911c-1c7294e91f44",MicrosoftAuth.clientId(null));
+        for(String empty:List.of("", "  ", "\t\n"))assertEquals(MicrosoftAuth.DEFAULT_CLIENT_ID,MicrosoftAuth.clientId(empty));
+        assertEquals("custom-application-id",MicrosoftAuth.clientId(" custom-application-id "));
+    }
+    @Test void patchUpgradeRemovesBothPreviousCoresWithoutTouchingOtherMods() throws Exception {
+        Path mods=temp.resolve("mods");Files.createDirectories(mods);
+        for(String previous:List.of("0.1.0","0.2.0")) {
+            Files.copy(jar("old-"+previous+".jar","{\"id\":\"tarclient\",\"version\":\""+previous+"\"}","fabric.mod.json"),mods.resolve("tar-client-"+previous+".jar"));
+        }
+        Path other=mods.resolve("other.jar");Files.writeString(other,"keep this mod");
+        byte[] update=Files.readAllBytes(jar("patch.jar","{\"id\":\"tarclient\",\"version\":\"0.2.1\"}","fabric.mod.json"));
+        for(int i=0;i<2;i++)CoreInstaller.install(temp,new java.io.ByteArrayInputStream(update),"0.2.1");
+        assertArrayEquals(update,Files.readAllBytes(mods.resolve("tar-client-0.2.1.jar")));
+        assertFalse(Files.exists(mods.resolve("tar-client-0.1.0.jar")));
+        assertFalse(Files.exists(mods.resolve("tar-client-0.2.0.jar")));
+        assertEquals("keep this mod",Files.readString(other));
+        try(var backups=Files.list(temp.resolve("removed-mods"))){assertEquals(2,backups.count());}
+    }
     @Test void coreUpgradePreservesWorldsAndBacksUpPreviousCore() throws Exception {
         Path game=temp.resolve("game"),mods=game.resolve("mods");Files.createDirectories(mods);
         Path old=jar("previous.jar","{\"id\":\"tarclient\",\"version\":\"0.1.0\"}","fabric.mod.json");

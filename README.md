@@ -1,4 +1,4 @@
-# Tar Client 0.2.0 — Windows preview
+# Tar Client 0.3.0 — Windows preview
 
 A standalone Windows launcher for **Minecraft Java 1.21.11 / Fabric 0.19.5**,
 plus its bundled Tar Client cosmetic and HUD mod. This is a real desktop app,
@@ -9,7 +9,7 @@ a project name, not a claim of incorporation or a verified Windows publisher.
 Minecraft itself remains a separate product and requires its own entitlement
 for full-game play.
 
-[Public releases](https://github.com/prutprut2003-creator/tar-client/releases) include checksums. The current source is 0.2.0; check the download version before installing. Windows signing remains subject to the limitation below.
+[Public releases](https://github.com/prutprut2003-creator/tar-client/releases) include checksums. The current source is 0.3.0; check the download version before installing. Windows signing remains subject to the limitation below.
 
 ## Code signing policy
 
@@ -23,7 +23,7 @@ Do not disable Windows protection or use the CMD launcher to evade that block.
 
 ## Start
 
-1. Extract the entire `TarClient-0.2.0-Windows.zip` archive.
+1. Extract the entire `TarClient-0.3.0-Windows.zip` archive.
 2. Open `Tar Client/Tar Client.exe`. Keep `app` and `runtime` beside the EXE.
    For ordinary startup errors (not a Windows security block), `Start Tar Client.cmd`
    starts the same launcher using the bundled Java runtime and shows startup errors.
@@ -31,22 +31,38 @@ Do not disable Windows protection or use the CMD launcher to evade that block.
    Fabric, assets, Fabric API, Mod Menu, BetterF3 and their required dependencies.
 4. To try it without an account, choose **Try Minecraft demo**. This launches
    Minecraft's own restricted demo, not an offline full-game account.
-5. Full-game sign-in requires the application ID described in
-   [SIGN-IN-SETUP.md](SIGN-IN-SETUP.md). This build does not include one.
+5. Open **Accounts** and choose **Sign in with Microsoft**. Tar Client's public
+   application ID is built in; you do not need to register or paste an ID.
+   **Minecraft API approval is pending, so full sign-in is not yet verified.**
+   See [SIGN-IN-SETUP.md](SIGN-IN-SETUP.md).
 
 Java 21 is bundled. The download targets Windows x64. The launcher defaults to
 4 GB game memory; change it under **Settings**.
 
-## What's new in 0.2.0
+## What's new in 0.3.0
+
+- 33 module cards, with a compact armor HUD and individual background controls for every Tar HUD panel.
+- Added shulker previews, Spotify song/artwork overlay, zoom, freelook, clock, inventory, saturation, hit color, coordinates, reach measurement and server information.
+- Added module profiles with Bedwars/SMP presets, permission-respecting time changes, disconnect confirmation and an unfocused FPS cap.
+- Integrated compatible TierTagger, Smooth Motion Blur, 3D Skin Layers and Resource Tree downloads. Their toggles apply when restarting Minecraft; each exposes its upstream settings.
+- Read [MODULES.md](MODULES.md) for controls, settings and verification limits.
+
+## Earlier improvements in 0.2.1
+
+- Built in Tar Client's registered Microsoft application ID for every download, including upgrades with empty settings. Explicit custom IDs remain supported.
+- Back up either previous bundled core (0.1.0 or 0.2.0) when upgrading, keeping worlds and other mods.
+- Minecraft API approval is still pending; registration alone does not confirm full login works.
+
+## Earlier improvements in 0.2.0
 
 - Fixed borderless F11 resizing: native window callbacks no longer overwrite the target monitor dimensions.
 - Right Shift opens/closes the new searchable, categorized in-game module menu; it respects text input and key-binding screens.
 - Redesigned launcher with a dark sidebar, original block artwork, module cards and an Accounts page.
 - Modrinth discovery now has category filters, sorting, pagination and asynchronous mod icons.
-- Start Microsoft sign-in or account creation from Accounts. The official browser completes the account flow; a registered Tar application ID is still required for sign-in.
+- Start Microsoft sign-in or account creation from Accounts. The official browser completes the account flow; the registered Tar application ID is now included.
 - Existing worlds and settings are reused. The previous bundled core is backed up during upgrade.
 
-**Verification status:** ten launcher tests pass. Twelve remapped mixins were checked against Minecraft 1.21.11 bytecode. A real GLFW window passed three fullscreen/windowed cycles with geometry callbacks at 3840x2160. The Swing launcher and live Modrinth catalog were rendered and inspected. Full gameplay, multi-monitor transitions and Microsoft account login remain unverified. See [TESTING.md](TESTING.md).
+**Verification status:** see [TESTING.md](TESTING.md) for the current launcher checks and earlier verification. Eighteen remapped mixins were checked against Minecraft 1.21.11 bytecode. A real GLFW window passed three fullscreen/windowed cycles with geometry callbacks at 3840x2160. The Swing launcher and live Modrinth catalog were rendered and inspected. Full gameplay, multi-monitor transitions and Microsoft account login remain unverified. See [TESTING.md](TESTING.md).
 
 ## Included features
 
@@ -105,8 +121,7 @@ schemas differ, so they are not copied into Tar's built-in settings form.
 Version declarations and hashes cannot guarantee that arbitrary third-party mods
 work together. Renderer replacements and other mods that modify the same game
 code still need a real launch test. Required Modrinth dependencies install
-automatically; optional dependencies do not. Search returns the first 30 matches;
-use a more specific query to narrow it.
+automatically; optional dependencies do not. Search supports pagination, sorting and category filters.
 
 ## Files and data
 

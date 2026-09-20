@@ -161,4 +161,13 @@ public final class ModManager {
             if(!managed.has(id))install(project);
         }
     }
+    public void syncIntegrations(dev.tarclient.config.ClientConfig config)throws Exception {
+        for(var entry:dev.tarclient.config.Integrations.ALL){
+            Path found=null;for(Path p:list())if(metadata(p).get("id").getAsString().equals(entry.modId())){found=p;break;}
+            if(config.on(entry.module())){
+                if(found==null)install(entry.project());
+                else if(found.toString().endsWith(".disabled"))toggle(found);
+            }else if(found!=null&&found.toString().endsWith(".jar"))toggle(found);
+        }
+    }
 }
